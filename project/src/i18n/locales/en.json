@@ -1,0 +1,243 @@
+{
+  "common": {
+    "home": "Home",
+    "catalog": "Catalog",
+    "about": "About",
+    "contact": "Contact",
+    "search": "Search",
+    "cart": "Cart",
+    "favorites": "Favorites",
+    "menu": "Menu",
+    "close": "Close",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Retry",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete"
+  },
+  "home": {
+    "hero": {
+      "title": "LegnoVivo",
+      "subtitle": "Minimalist furniture for modern living",
+      "button": "Shop All"
+    },
+    "bestsellers": {
+      "title": "Bestsellers",
+      "viewAll": "View all"
+    },
+    "about": {
+      "title": "About Us",
+      "description1": "LegnoVivo was founded with a simple mission: to create beautiful, functional furniture for the modern home. Our pieces are crafted with care, using eco-friendly materials and timeless design that embodies simplicity and elegance.",
+      "description2": "We believe that well-designed furniture should enhance your living space while reflecting your personal style. Each LegnoVivo piece is created with attention to detail and a commitment to quality that will last for generations.",
+      "readMore": "Read more"
+    },
+    "categories": {
+      "title": "Categories",
+      "subtitle": "Explore our carefully curated collection of furniture designed to elevate your living spaces",
+      "viewAll": "View all catalog"
+    },
+    "discount": {
+      "title": "Get 10% Off",
+      "subtitle": "Subscribe to receive updates about our latest offers and updates",
+      "name": "Your name",
+      "email": "Your email",
+      "subscribe": "Subscribe",
+      "success": {
+        "title": "Thank you!",
+        "message": "Your 10% discount code has been emailed to you",
+        "check": "Please check your inbox for further instructions"
+      }
+    },
+    "reviews": {
+      "title": "Reviews"
+    }
+  },
+  "catalog": {
+    "title": "Our Collection",
+    "filters": {
+      "title": "Filters",
+      "categories": "Categories",
+      "priceRange": "Price Range",
+      "all": "All"
+    },
+    "sort": {
+      "title": "Sort by:",
+      "popularity": "Popularity",
+      "priceLow": "Price: Low to High",
+      "priceHigh": "Price: High to Low",
+      "newest": "Newest"
+    },
+    "noProducts": "No products found with the selected filters",
+    "productsCount": "{{count}} products"
+  },
+  "product": {
+    "addToCart": "Add to Cart",
+    "addToFavorites": "Add to Favorites",
+    "removeFromFavorites": "Remove from Favorites",
+    "dimensions": "Dimensions",
+    "materials": "Materials",
+    "details": "Product Details",
+    "similarProducts": "You may also like"
+  },
+  "cart": {
+    "title": "Cart",
+    "empty": {
+      "title": "Your cart is empty",
+      "subtitle": "Add items to your cart",
+      "action": "Continue Shopping"
+    },
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "total": "Total",
+    "checkout": "Checkout"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "continueShopping": "Continue Shopping",
+    "shippingInfo": "Shipping Information",
+    "form": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "phone": "Phone",
+      "address": "Address",
+      "city": "City",
+      "postalCode": "Postal Code",
+      "country": "Country",
+      "notes": "Order Notes (optional)"
+    },
+    "orderSummary": "Order Summary",
+    "completeOrder": "Complete Order",
+    "processing": "Processing..."
+  },
+  "orderSuccess": {
+    "title": "Thank you for your order!",
+    "subtitle": "Your order has been received and is being processed. We've sent a confirmation email with all the details.",
+    "orderInfo": {
+      "title": "Order Information",
+      "number": "Order Number",
+      "shipping": "We'll send you shipping confirmation when your items are on the way!"
+    },
+    "actions": {
+      "home": "Return Home",
+      "continue": "Continue Shopping"
+    }
+  },
+  "admin": {
+    "login": {
+      "title": "Admin Login",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Sign In",
+      "error": "Invalid email or password"
+    },
+    "dashboard": {
+      "title": "Dashboard",
+      "orders": "Orders",
+      "products": "Products",
+      "categories": "Categories",
+      "reviews": "Reviews",
+      "subscribers": "Subscribers"
+    },
+    "orders": {
+      "title": "Orders",
+      "status": {
+        "new": "New",
+        "processing": "Processing",
+        "completed": "Completed",
+        "cancelled": "Cancelled"
+      },
+      "changeStatus": "Change Status"
+    },
+    "products": {
+      "title": "Products",
+      "add": "Add Product",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "categories": {
+      "title": "Categories",
+      "add": "Add Category",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "reviews": {
+      "title": "Reviews",
+      "approve": "Approve",
+      "reject": "Reject",
+      "approved": "Approved",
+      "pending": "Pending",
+      "add": "Add Review",
+      "edit": "Edit Review",
+      "rating": {
+        "poor": "Poor",
+        "fair": "Fair",
+        "average": "Average",
+        "good": "Good",
+        "excellent": "Excellent"
+      }
+    },
+    "subscribers": {
+      "title": "Subscribers",
+      "export": "Export List"
+    },
+    "common": {
+      "delete": "Delete"
+    },
+    "form": {
+      "name": "Name",
+      "name_ru": "Name (Russian)",
+      "slug": "URL slug",
+      "image": "Image URL",
+      "category": "Category",
+      "selectCategory": "Select category",
+      "price": "Price",
+      "shortDescription": "Short Description",
+      "shortDescription_ru": "Short Description (Russian)",
+      "description": "Full Description",
+      "description_ru": "Full Description (Russian)",
+      "dimensions": "Dimensions",
+      "width": "Width (cm)",
+      "height": "Height (cm)",
+      "depth": "Depth (cm)",
+      "isBestseller": "Bestseller",
+      "images": "Images",
+      "addImage": "Add Image",
+      "materials": "Materials",
+      "materials_ru": "Materials (Russian)",
+      "addMaterial": "Add Material",
+      "imageUrl": "Image URL",
+      "uploadImage": "Upload Image",
+      "useImageUrl": "Use image URL",
+      "useImageUpload": "Upload from device",
+      "dragAndDrop": "Drag and drop a file here or click to select",
+      "uploading": "Uploading...",
+      "uploadSuccess": "Image uploaded successfully",
+      "uploadError": "Error uploading image",
+      "product": "Product",
+      "selectProduct": "Select product",
+      "rating": "Rating",
+      "text": "Review text",
+      "text_ru": "Review text (Russian)",
+      "avatar": "Avatar image",
+      "isApproved": "Approved"
+    }
+  },
+  "footer": {
+    "company": "Company",
+    "categories": "Categories",
+    "newsletter": "Newsletter",
+    "newsletterText": "Sign up for our newsletter to receive updates and special offers",
+    "yourEmail": "Your email",
+    "subscribe": "Subscribe",
+    "careers": "Careers",
+    "showroom": "Showroom",
+    "chairs": "Chairs",
+    "lamps": "Lamps", 
+    "beds": "Beds",
+    "sofas": "Sofas",
+    "tables": "Tables",
+    "allRightsReserved": "All Rights Reserved"
+  }
+}
