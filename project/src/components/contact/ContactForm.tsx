@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import Input from '../ui/Input';
 import Button from '../ui/Button';
+import { useTranslation } from 'react-i18next';
 
 interface ContactFormProps {
   onSuccess?: () => void;
 }
 
 const ContactForm: React.FC<ContactFormProps> = ({ onSuccess }) => {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -34,13 +36,13 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSuccess }) => {
     const newErrors: Record<string, string> = {};
     
     if (!formData.name.trim()) {
-      newErrors.name = 'Name is required';
+      newErrors.name = t('common.error');
     }
     
     if (!formData.phone.trim()) {
-      newErrors.phone = 'Phone number is required';
+      newErrors.phone = t('common.error');
     } else if (!/^\+?[0-9\s-()]{8,}$/.test(formData.phone)) {
-      newErrors.phone = 'Please enter a valid phone number';
+      newErrors.phone = t('common.error');
     }
     
     setErrors(newErrors);
@@ -62,7 +64,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSuccess }) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <Input
-        label="Name"
+        label={t('contact.form.name')}
         name="name"
         value={formData.name}
         onChange={handleChange}
@@ -72,7 +74,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSuccess }) => {
       />
       
       <Input
-        label="Phone"
+        label={t('contact.form.phone')}
         name="phone"
         value={formData.phone}
         onChange={handleChange}
@@ -83,7 +85,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSuccess }) => {
       
       <div className="mb-4">
         <label className="block text-sm font-light text-gray-700 mb-1">
-          Comment
+          {t('contact.form.comment')}
         </label>
         <textarea
           name="comment"
@@ -97,7 +99,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSuccess }) => {
       </div>
       
       <Button type="submit" variant="primary" fullWidth>
-        Submit
+        {t('contact.form.submit')}
       </Button>
     </form>
   );

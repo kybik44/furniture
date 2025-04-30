@@ -3,82 +3,48 @@ import { useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Layout from '../components/layout/Layout';
 import ProductCard from '../components/ui/ProductCard';
-import { useProducts, useCategories } from '../lib/hooks';
-import { Product } from '../lib/api';
-import { ChevronDown, SlidersHorizontal } from 'lucide-react';
+import { useCategories } from '../lib/hooks';
+import { productApi } from '../lib/api';
+import { ChevronDown, SlidersHorizontal, Search } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { getLocalizedValue } from '../lib/helpers';
+import Input from '../components/ui/Input';
+import { useQuery } from '@tanstack/react-query';
 
 const CatalogPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const categoryParam = searchParams.get('category');
   const searchParam = searchParams.get('search');
   
-  const { data: products, isLoading: isLoadingProducts } = useProducts();
   const { data: categories, isLoading: isLoadingCategories } = useCategories();
   
-  // Отладочная информация
-  useEffect(() => {
-    if (products) {
-      console.log('Загружено товаров с сервера:', products.length);
-      console.log('Товары:', products);
-    }
-  }, [products]);
-  
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 50000]);
   const [sortOption, setSortOption] = useState('popularity');
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
+  const [searchValue, setSearchValue] = useState(searchParam || '');
+  const [materials, setMaterials] = useState<string[]>([]);
   
-  // Filter products based on params
+  // Хук для получения отфильтрованных продуктов
+  const { data: filteredProducts, isLoading: isLoadingProducts } = useQuery({
+    queryKey: ['products', 'filtered', categoryParam, searchParam, priceRange, sortOption, materials, i18n.language],
+    queryFn: () => productApi.getFilteredProducts({
+      categorySlug: categoryParam || undefined,
+      search: searchParam || undefined,
+      minPrice: priceRange[0],
+      maxPrice: priceRange[1],
+      sortBy: sortOption as 'price-low' | 'price-high' | 'newest' | 'popularity',
+      materials: materials.length > 0 ? materials : undefined,
+      locale: i18n.language
+    }),
+  });
+  
+  // Отладочная информация
   useEffect(() => {
-    if (!products) return;
-    
-    let filtered = [...products];
-    
-    // Filter by category
-    if (categoryParam) {
-      const categoryId = categories?.find(c => c.slug === categoryParam)?.id;
-      if (categoryId) {
-        filtered = filtered.filter(product => product.category_id === categoryId);
-      }
+    if (filteredProducts) {
+      console.log('Отфильтрованных товаров:', filteredProducts.length);
     }
-    
-    // Filter by search term
-    if (searchParam) {
-      const searchLower = searchParam.toLowerCase();
-      filtered = filtered.filter(product => 
-        product.name.toLowerCase().includes(searchLower) || 
-        product.description.toLowerCase().includes(searchLower)
-      );
-    }
-    
-    // Filter by price range
-    filtered = filtered.filter(product => 
-      product.price >= priceRange[0] && product.price <= priceRange[1]
-    );
-    
-    // Sort products
-    switch (sortOption) {
-      case 'price-low':
-        filtered.sort((a, b) => Number(a.price) - Number(b.price));
-        break;
-      case 'price-high':
-        filtered.sort((a, b) => Number(b.price) - Number(a.price));
-        break;
-      case 'newest':
-        filtered.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-        break;
-      case 'popularity':
-      default:
-        filtered.sort((a, b) => (b.is_bestseller ? 1 : 0) - (a.is_bestseller ? 1 : 0));
-        break;
-    }
-    
-    console.log('Отфильтрованных товаров:', filtered.length);
-    setFilteredProducts(filtered);
-  }, [products, categories, categoryParam, searchParam, priceRange, sortOption]);
+  }, [filteredProducts]);
   
   const handleCategoryClick = (slug: string) => {
     setSearchParams(params => {
@@ -86,6 +52,18 @@ const CatalogPage: React.FC = () => {
         params.delete('category');
       } else {
         params.set('category', slug);
+      }
+      return params;
+    });
+  };
+  
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSearchParams(params => {
+      if (!searchValue.trim()) {
+        params.delete('search');
+      } else {
+        params.set('search', searchValue.trim());
       }
       return params;
     });
@@ -103,6 +81,16 @@ const CatalogPage: React.FC = () => {
   const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSortOption(event.target.value);
   };
+  
+  const handleMaterialToggle = (material: string) => {
+    setMaterials(current => {
+      if (current.includes(material)) {
+        return current.filter(m => m !== material);
+      } else {
+        return [...current, material];
+      }
+    });
+  };
 
   if (isLoadingProducts || isLoadingCategories) {
     return (
@@ -116,11 +104,40 @@ const CatalogPage: React.FC = () => {
     );
   }
 
+  // Собираем уникальные материалы из всех продуктов
+  const allMaterials = filteredProducts ? 
+    [...new Set(filteredProducts.flatMap(product => 
+      i18n.language === 'ru' ? product.materials_ru : product.materials
+    ))].sort() : [];
+
   return (
     <Layout>
       <section className="py-16 md:py-24">
         <div className="container mx-auto px-4 md:px-8">
           <h1 className="text-3xl md:text-4xl font-light mb-8 text-center">{t('catalog.title')}</h1>
+          
+          {/* Search bar */}
+          <div className="max-w-xl mx-auto mb-10">
+            <form onSubmit={handleSearchSubmit} className="flex w-full">
+              <div className="relative flex-grow">
+                <Input
+                  type="text"
+                  placeholder={t('search.placeholder')}
+                  value={searchValue}
+                  onChange={(e) => setSearchValue(e.target.value)}
+                  fullWidth
+                  className="pr-10"
+                />
+              </div>
+              <button
+                type="submit"
+                className="ml-2 px-5 py-2 bg-black text-white hover:bg-gray-800 flex items-center justify-center"
+              >
+                <Search size={16} className="mr-2" />
+                {t('search.button')}
+              </button>
+            </form>
+          </div>
           
           {/* Mobile Filter Toggle */}
           <div className="md:hidden mb-6">
@@ -196,12 +213,35 @@ const CatalogPage: React.FC = () => {
                   />
                 </div>
               </div>
+              
+              {/* Добавляем фильтр по материалам */}
+              {allMaterials.length > 0 && (
+                <div className="mb-8">
+                  <h3 className="text-sm font-medium mb-4">{t('catalog.filters.materials')}</h3>
+                  <div className="space-y-2">
+                    {allMaterials.map(material => (
+                      <div key={material} className="flex items-center">
+                        <input
+                          type="checkbox"
+                          id={`material-${material}`}
+                          checked={materials.includes(material)}
+                          onChange={() => handleMaterialToggle(material)}
+                          className="mr-2"
+                        />
+                        <label htmlFor={`material-${material}`} className="text-sm font-light text-gray-700">
+                          {material}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
             
             {/* Product Grid */}
             <div className="md:col-span-3">
               <div className="flex justify-between items-center mb-6">
-                <p className="text-sm text-gray-500">{t('catalog.productsCount', { count: filteredProducts.length })}</p>
+                <p className="text-sm text-gray-500">{t('catalog.productsCount', { count: filteredProducts?.length || 0 })}</p>
                 <div className="flex items-center">
                   <label htmlFor="sort" className="text-sm text-gray-500 mr-2">{t('catalog.sort.title')}</label>
                   <select
@@ -218,13 +258,13 @@ const CatalogPage: React.FC = () => {
                 </div>
               </div>
               
-              {filteredProducts.length === 0 ? (
+              {filteredProducts?.length === 0 ? (
                 <div className="text-center py-12">
                   <p className="text-gray-500">{t('catalog.noProducts')}</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filteredProducts.map((product, index) => (
+                  {filteredProducts?.map((product, index) => (
                     <motion.div
                       key={product.id}
                       initial={{ opacity: 0, y: 20 }}

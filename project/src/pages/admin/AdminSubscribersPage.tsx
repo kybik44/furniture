@@ -4,11 +4,12 @@ import AdminLayout from '../../components/admin/AdminLayout';
 import Button from '../../components/ui/Button';
 import { format } from 'date-fns';
 import { useSubscribers, useDeleteSubscriber } from '../../lib/hooks';
-import { Check, X, Trash, Loader, Download } from 'lucide-react';
+import { Check, X, Trash, Loader, Download, Copy } from 'lucide-react';
 
 const AdminSubscribersPage: React.FC = () => {
   const { t } = useTranslation();
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+  const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
   const { data: subscribers, isLoading } = useSubscribers();
   const deleteSubscriber = useDeleteSubscriber();
@@ -22,17 +23,28 @@ const AdminSubscribersPage: React.FC = () => {
     }
   };
 
+  const handleCopyCode = (code: string) => {
+    navigator.clipboard.writeText(code);
+    setCopiedCode(code);
+    
+    // Сбросить статус скопированного кода через 2 секунды
+    setTimeout(() => {
+      setCopiedCode(null);
+    }, 2000);
+  };
+
   const handleExportCSV = () => {
     if (!subscribers || subscribers.length === 0) return;
 
     // Подготовка данных для CSV
     const csvContent = [
       // Заголовки
-      ['Name', 'Email', 'Signup Date'].join(','),
+      ['Name', 'Email', 'Discount Code', 'Signup Date'].join(','),
       // Данные
       ...subscribers.map(subscriber => [
         subscriber.name,
         subscriber.email,
+        subscriber.discount_code,
         format(new Date(subscriber.created_at), 'dd.MM.yyyy')
       ].join(','))
     ].join('\n');
@@ -62,7 +74,7 @@ const AdminSubscribersPage: React.FC = () => {
       {isLoading ? (
         <div className="text-center py-12">{t('common.loading')}</div>
       ) : (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-100">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead>
               <tr>
@@ -71,6 +83,9 @@ const AdminSubscribersPage: React.FC = () => {
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Email
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Код скидки
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Date
@@ -88,6 +103,24 @@ const AdminSubscribersPage: React.FC = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-500">{subscriber.email}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center">
+                      <div className="text-sm font-mono bg-gray-50 px-2 py-1 rounded">
+                        {subscriber.discount_code}
+                      </div>
+                      <button 
+                        onClick={() => handleCopyCode(subscriber.discount_code)}
+                        className="ml-2 text-gray-400 hover:text-gray-600 focus:outline-none"
+                        title="Копировать код"
+                      >
+                        {copiedCode === subscriber.discount_code ? (
+                          <Check size={16} className="text-green-500" />
+                        ) : (
+                          <Copy size={16} />
+                        )}
+                      </button>
+                    </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-500">

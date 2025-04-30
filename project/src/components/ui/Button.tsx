@@ -15,7 +15,7 @@ const Button: React.FC<ButtonProps> = ({
   className = '',
   ...props
 }) => {
-  const baseStyles = 'font-light transition-colors focus:outline-none focus:ring-2 focus:ring-opacity-50';
+  const baseStyles = 'flex items-center font-light transition-colors focus:outline-none focus:ring-2 focus:ring-opacity-50';
   
   const variantStyles = {
     primary: 'bg-black text-white hover:bg-gray-800 focus:ring-gray-500',

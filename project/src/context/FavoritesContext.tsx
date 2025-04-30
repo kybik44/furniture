@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { Product } from '../lib/api';
 
 interface FavoritesContextType {
@@ -6,12 +6,25 @@ interface FavoritesContextType {
   addToFavorites: (product: Product) => void;
   removeFromFavorites: (productId: string) => void;
   isFavorite: (productId: string) => boolean;
+  clearFavorites: () => void;
 }
 
 const FavoritesContext = createContext<FavoritesContextType | undefined>(undefined);
 
+// Ключ для хранения в localStorage
+const FAVORITES_STORAGE_KEY = 'legnovivo_favorites';
+
 export const FavoritesProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [favorites, setFavorites] = useState<Product[]>([]);
+  const [favorites, setFavorites] = useState<Product[]>(() => {
+    // Инициализация из localStorage при загрузке
+    const savedFavorites = localStorage.getItem(FAVORITES_STORAGE_KEY);
+    return savedFavorites ? JSON.parse(savedFavorites) : [];
+  });
+
+  // Сохранение в localStorage при изменении избранного
+  useEffect(() => {
+    localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(favorites));
+  }, [favorites]);
 
   const addToFavorites = (product: Product) => {
     if (!isFavorite(product.id)) {
@@ -27,12 +40,17 @@ export const FavoritesProvider: React.FC<{ children: ReactNode }> = ({ children 
     return favorites.some(product => product.id === productId);
   };
 
+  const clearFavorites = () => {
+    setFavorites([]);
+  };
+
   return (
     <FavoritesContext.Provider value={{ 
       favorites, 
       addToFavorites, 
       removeFromFavorites, 
-      isFavorite 
+      isFavorite,
+      clearFavorites
     }}>
       {children}
     </FavoritesContext.Provider>

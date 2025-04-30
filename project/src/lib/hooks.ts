@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { categoryApi, productApi, reviewApi, subscriberApi, orderApi, storageApi } from './api';
-import type { Category, Product, Review, Order, Subscriber, OrderItem } from './api';
+import { categoryApi, productApi, reviewApi, subscriberApi, orderApi, storageApi, jobListingApi, jobApplicationApi } from './api';
+import type { Category, Product, Review, Order, OrderItem, JobListing, JobApplication } from './api';
 
 // Хуки для категорий
 export const useCategories = () => {
@@ -69,6 +69,14 @@ export const useProduct = (id: string) => {
     queryKey: ['product', id],
     queryFn: () => productApi.getById(id),
     enabled: !!id,
+  });
+};
+
+export const useSearchProducts = (query: string, locale: string = 'en') => {
+  return useQuery({
+    queryKey: ['products', 'search', query, locale],
+    queryFn: () => productApi.search(query, locale),
+    enabled: !!query && query.trim().length > 1, // Поиск только если запрос не пустой и длиннее 1 символа
   });
 };
 
@@ -287,6 +295,13 @@ export const useSubscribers = () => {
   });
 };
 
+export const useSubscribe = () => {
+  return useMutation({
+    mutationFn: ({ name, email, discountCode }: { name: string; email: string; discountCode: string }) => 
+      subscriberApi.subscribe(name, email, discountCode),
+  });
+};
+
 export const useDeleteSubscriber = () => {
   const queryClient = useQueryClient();
   
@@ -294,6 +309,131 @@ export const useDeleteSubscriber = () => {
     mutationFn: (id: string) => subscriberApi.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'subscribers'] });
+    },
+  });
+};
+
+// Хуки для вакансий
+export const useJobListings = () => {
+  return useQuery({
+    queryKey: ['admin', 'job_listings'],
+    queryFn: () => jobListingApi.getAll(),
+  });
+};
+
+export const useActiveJobListings = () => {
+  return useQuery({
+    queryKey: ['job_listings', 'active'],
+    queryFn: () => jobListingApi.getActive(),
+  });
+};
+
+export const useJobListing = (id: string) => {
+  return useQuery({
+    queryKey: ['job_listing', id],
+    queryFn: () => jobListingApi.getById(id),
+    enabled: !!id,
+  });
+};
+
+export const useCreateJobListing = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: (newJobListing: Omit<JobListing, 'id' | 'created_at' | 'updated_at'>) => 
+      jobListingApi.create(newJobListing),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'job_listings'] });
+      queryClient.invalidateQueries({ queryKey: ['job_listings', 'active'] });
+    },
+  });
+};
+
+export const useUpdateJobListing = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string, data: Partial<Omit<JobListing, 'id' | 'created_at'>> }) => 
+      jobListingApi.update(id, data),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'job_listings'] });
+      queryClient.invalidateQueries({ queryKey: ['job_listing', variables.id] });
+      queryClient.invalidateQueries({ queryKey: ['job_listings', 'active'] });
+    },
+  });
+};
+
+export const useDeleteJobListing = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: (id: string) => jobListingApi.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'job_listings'] });
+      queryClient.invalidateQueries({ queryKey: ['job_listings', 'active'] });
+    },
+  });
+};
+
+// Хуки для откликов на вакансии
+export const useJobApplications = () => {
+  return useQuery({
+    queryKey: ['admin', 'job_applications'],
+    queryFn: () => jobApplicationApi.getAll(),
+  });
+};
+
+export const useJobApplicationsByJobListing = (jobListingId: string) => {
+  return useQuery({
+    queryKey: ['job_applications', 'by_job_listing', jobListingId],
+    queryFn: () => jobApplicationApi.getByJobListingId(jobListingId),
+    enabled: !!jobListingId,
+  });
+};
+
+export const useJobApplication = (id: string) => {
+  return useQuery({
+    queryKey: ['job_application', id],
+    queryFn: () => jobApplicationApi.getById(id),
+    enabled: !!id,
+  });
+};
+
+export const useCreateJobApplication = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: (newApplication: Omit<JobApplication, 'id' | 'created_at' | 'status'>) => 
+      jobApplicationApi.create(newApplication),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'job_applications'] });
+      queryClient.invalidateQueries({ queryKey: ['job_applications', 'by_job_listing', data.job_listing_id] });
+    },
+  });
+};
+
+export const useUpdateJobApplicationStatus = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: ({ id, status }: { id: string, status: 'new' | 'viewed' | 'contacted' | 'rejected' }) => 
+      jobApplicationApi.updateStatus(id, status),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'job_applications'] });
+      queryClient.invalidateQueries({ queryKey: ['job_application', data.id] });
+      queryClient.invalidateQueries({ queryKey: ['job_applications', 'by_job_listing', data.job_listing_id] });
+    },
+  });
+};
+
+export const useDeleteJobApplication = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: (id: string) => jobApplicationApi.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'job_applications'] });
+      queryClient.invalidateQueries({ queryKey: ['job_applications'] });
     },
   });
 }; 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { LayoutDashboard, Package, Cat as Categories, ShoppingCart, MessageSquare, Users, LogOut } from 'lucide-react';
+import { LayoutDashboard, Package, Cat as Categories, ShoppingCart, MessageSquare, Users, LogOut, Briefcase } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 interface AdminLayoutProps {
@@ -53,6 +53,11 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       path: '/admin/subscribers',
       label: t('admin.subscribers.title'),
       icon: Users
+    },
+    {
+      path: '/admin/job-listings',
+      label: t('admin.jobListings.title', 'Вакансии'),
+      icon: Briefcase
     }
   ];
 

@@ -14,6 +14,12 @@ import AdminCategoriesPage from './pages/admin/AdminCategoriesPage';
 import AdminOrdersPage from './pages/admin/AdminOrdersPage';
 import AdminReviewsPage from './pages/admin/AdminReviewsPage';
 import AdminSubscribersPage from './pages/admin/AdminSubscribersPage';
+import AdminJobListingsPage from './pages/admin/AdminJobListingsPage';
+import AboutPage from './pages/AboutPage';
+import ContactPage from './pages/ContactPage';
+import CareersPage from './pages/CareersPage';
+import FavoritesPage from './pages/FavoritesPage';
+import SearchPage from './pages/SearchPage';
 import { CartProvider } from './context/CartContext';
 import { FavoritesProvider } from './context/FavoritesContext';
 import { AuthProvider } from './context/AuthContext';
@@ -24,7 +30,7 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 1000 * 60 * 5, // 5 minutes
-      cacheTime: 1000 * 60 * 30, // 30 minutes
+      gcTime: 1000 * 60 * 30, // 30 minutes
     },
   },
 });
@@ -43,6 +49,11 @@ function App() {
                 <Route path="/product/:id" element={<ProductDetailPage />} />
                 <Route path="/checkout" element={<CheckoutPage />} />
                 <Route path="/checkout/success" element={<OrderSuccessPage />} />
+                <Route path="/about" element={<AboutPage />} />
+                <Route path="/contact" element={<ContactPage />} />
+                <Route path="/careers" element={<CareersPage />} />
+                <Route path="/favorites" element={<FavoritesPage />} />
+                <Route path="/search" element={<SearchPage />} />
                 <Route path="/admin/login" element={<AdminLoginPage />} />
 
                 {/* Protected Admin Routes */}
@@ -91,6 +102,14 @@ function App() {
                   element={
                     <ProtectedRoute>
                       <AdminSubscribersPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/job-listings"
+                  element={
+                    <ProtectedRoute>
+                      <AdminJobListingsPage />
                     </ProtectedRoute>
                   }
                 />

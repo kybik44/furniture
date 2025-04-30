@@ -213,18 +213,97 @@ export interface Database {
           id: string
           email: string
           name: string
+          discount_code: string
           created_at: string
         }
         Insert: {
           id?: string
           email: string
           name: string
+          discount_code: string
           created_at?: string
         }
         Update: {
           id?: string
           email?: string
           name?: string
+          discount_code?: string
+          created_at?: string
+        }
+      }
+      job_listings: {
+        Row: {
+          id: string
+          title: string
+          title_ru: string
+          type: string
+          type_ru: string
+          description: string
+          description_ru: string
+          location: string
+          is_active: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          title: string
+          title_ru: string
+          type: string
+          type_ru: string
+          description: string
+          description_ru: string
+          location: string
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          title?: string
+          title_ru?: string
+          type?: string
+          type_ru?: string
+          description?: string
+          description_ru?: string
+          location?: string
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      job_applications: {
+        Row: {
+          id: string
+          job_listing_id: string
+          name: string
+          email: string
+          phone: string
+          resume_url: string
+          cover_letter: string | null
+          status: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          job_listing_id: string
+          name: string
+          email: string
+          phone: string
+          resume_url: string
+          cover_letter?: string | null
+          status?: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          job_listing_id?: string
+          name?: string
+          email?: string
+          phone?: string
+          resume_url?: string
+          cover_letter?: string | null
+          status?: string
           created_at?: string
         }
       }

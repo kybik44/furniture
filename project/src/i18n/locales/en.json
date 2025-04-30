@@ -225,19 +225,83 @@
     }
   },
   "footer": {
-    "company": "Company",
-    "categories": "Categories",
-    "newsletter": "Newsletter",
-    "newsletterText": "Sign up for our newsletter to receive updates and special offers",
-    "yourEmail": "Your email",
-    "subscribe": "Subscribe",
+    "aboutLink": "About",
+    "catalogLink": "Catalog",
+    "contactLink": "Contact",
     "careers": "Careers",
-    "showroom": "Showroom",
-    "chairs": "Chairs",
-    "lamps": "Lamps", 
-    "beds": "Beds",
-    "sofas": "Sofas",
-    "tables": "Tables",
-    "allRightsReserved": "All Rights Reserved"
+    "companyTitle": "Company",
+    "servicesTitle": "Services",
+    "newsletterTitle": "Subscribe to newsletter",
+    "newsletterPlaceholder": "Your email",
+    "subscribeButton": "Subscribe",
+    "copyright": "© 2023 LegnoVivo. All rights reserved."
+  },
+  "careers": {
+    "title": "Careers at LegnoVivo",
+    "subtitle": "Join our team of professionals and create unique furniture that will delight people for years to come.",
+    "whyJoin": {
+      "title": "Why work with us",
+      "text1": "LegnoVivo is not just a furniture manufacturing company. We create spaces that become part of our clients' lives, a place for meetings, work, and relaxation.",
+      "text2": "Our team is a community of talented specialists united by a love for wood and design. We value creative approaches, attention to detail, and the pursuit of continuous improvement.",
+      "text3": "Working with us, you get opportunities for professional growth, participation in interesting projects, and creating products to be proud of."
+    },
+    "benefits": {
+      "title": "Benefits of working at LegnoVivo",
+      "subtitle": "We care about our employees and create all the conditions for comfortable work and professional development.",
+      "benefit1": {
+        "title": "Professional Development",
+        "text": "We support the desire to learn and improve skills. Training, professional development courses, and participation in professional exhibitions are all available to our employees."
+      },
+      "benefit2": {
+        "title": "Creative Atmosphere",
+        "text": "At LegnoVivo, we value every idea. Here you can bring your boldest concepts to life and work with the best materials and equipment."
+      },
+      "benefit3": {
+        "title": "Employee Care",
+        "text": "We provide comfortable working conditions, competitive salary, bonuses for achievements, and a friendly team atmosphere."
+      }
+    },
+    "openings": {
+      "title": "Open Positions",
+      "subtitle": "Explore our current job openings and join the LegnoVivo team. If you don't find a suitable position, send us your resume — we're always happy to meet talented specialists.",
+      "applyButton": "Apply",
+      "position1": {
+        "title": "Furniture Designer",
+        "type": "Full-time, Moscow",
+        "description": "We are looking for an experienced furniture designer who will help us create unique interior items that combine aesthetics, functionality, and sustainability."
+      },
+      "position2": {
+        "title": "Master Carpenter",
+        "type": "Full-time, Moscow",
+        "description": "We need a wood craftsman with high qualifications and experience in creating premium furniture. You will work with various types of wood and participate in creating exclusive furniture pieces."
+      },
+      "position3": {
+        "title": "Customer Relations Manager",
+        "type": "Full-time, Moscow",
+        "description": "We're looking for a communicative and responsible manager to work with clients. You will consult clients on our products, help them choose furniture, and ensure a high level of service."
+      }
+    }
+  },
+  "favorites": {
+    "title": "Favorites",
+    "subtitle": "Your saved items that you can add to cart or view in detail",
+    "empty": {
+      "title": "Your favorites list is empty",
+      "message": "Add items you like to favorites so you can come back to them later",
+      "button": "Go to catalog"
+    },
+    "remove": "Remove from favorites"
+  },
+  "search": {
+    "title": "Search",
+    "placeholder": "Enter your search query...",
+    "button": "Search",
+    "results": "Search Results",
+    "noResults": "No results found for your query",
+    "found": "Found {{count}} products",
+    "suggestion": "Try changing your search or browse our catalog",
+    "viewCatalog": "Go to catalog",
+    "recentSearches": "Recent searches",
+    "clearHistory": "Clear history"
   }
 }

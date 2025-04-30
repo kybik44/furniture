@@ -70,6 +70,31 @@
       - id (uuid, primary key)
       - email (text, unique)
       - name (text)
+      - discount_code (text)
+      - created_at (timestamp)
+
+    - job_listings
+      - id (uuid, primary key)
+      - title (text)
+      - title_ru (text)
+      - type (text)
+      - type_ru (text)
+      - description (text)
+      - description_ru (text)
+      - location (text)
+      - is_active (boolean)
+      - created_at (timestamp)
+      - updated_at (timestamp)
+
+    - job_applications
+      - id (uuid, primary key)
+      - job_listing_id (uuid, foreign key)
+      - name (text)
+      - email (text)
+      - phone (text)
+      - resume_url (text)
+      - cover_letter (text)
+      - status (text) - 'new', 'viewed', 'contacted', 'rejected'
       - created_at (timestamp)
 
   2. Security
@@ -158,7 +183,36 @@ CREATE TABLE subscribers (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   email text UNIQUE NOT NULL,
   name text NOT NULL,
+  discount_code text NOT NULL,
   created_at timestamptz DEFAULT now()
+);
+
+-- Create job_listings table
+CREATE TABLE job_listings (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  title TEXT NOT NULL,
+  title_ru TEXT NOT NULL,
+  type TEXT NOT NULL,
+  type_ru TEXT NOT NULL,
+  description TEXT NOT NULL,
+  description_ru TEXT NOT NULL,
+  location TEXT NOT NULL,
+  is_active BOOLEAN DEFAULT TRUE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+);
+
+-- Create job_applications table
+CREATE TABLE job_applications (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  job_listing_id UUID REFERENCES job_listings(id) ON DELETE CASCADE,
+  name TEXT NOT NULL,
+  email TEXT NOT NULL,
+  phone TEXT NOT NULL,
+  resume_url TEXT NOT NULL,
+  cover_letter TEXT,
+  status TEXT NOT NULL CHECK (status IN ('new', 'viewed', 'contacted', 'rejected')),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
 );
 
 -- Enable Row Level Security
@@ -168,6 +222,8 @@ ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
 ALTER TABLE order_items ENABLE ROW LEVEL SECURITY;
 ALTER TABLE reviews ENABLE ROW LEVEL SECURITY;
 ALTER TABLE subscribers ENABLE ROW LEVEL SECURITY;
+ALTER TABLE job_listings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE job_applications ENABLE ROW LEVEL SECURITY;
 
 -- Policies for Categories
 CREATE POLICY "Categories are viewable by everyone" ON categories
@@ -226,6 +282,28 @@ CREATE POLICY "Subscribers are viewable by authenticated users only" ON subscrib
 CREATE POLICY "Anyone can subscribe" ON subscribers
   FOR INSERT WITH CHECK (true);
 
+-- Policies for job_listings
+CREATE POLICY "Allow public read access to active job listings" 
+  ON job_listings FOR SELECT 
+  USING (is_active = TRUE);
+
+CREATE POLICY "Allow admin full access" 
+  ON job_listings FOR ALL 
+  USING (auth.uid() IN (SELECT auth.uid() FROM auth.users WHERE auth.email() = 'admin@example.com'));
+
+-- Policies for job_applications
+CREATE POLICY "Applications are viewable by authenticated users only" 
+  ON job_applications FOR SELECT 
+  USING (auth.role() = 'authenticated');
+
+CREATE POLICY "Anyone can create an application" 
+  ON job_applications FOR INSERT 
+  WITH CHECK (true);
+
+CREATE POLICY "Applications are manageable by authenticated users only" 
+  ON job_applications FOR ALL 
+  USING (auth.role() = 'authenticated');
+
 -- Create updated_at triggers
 CREATE OR REPLACE FUNCTION update_updated_at()
 RETURNS TRIGGER AS $$
@@ -249,3 +327,18 @@ CREATE TRIGGER update_orders_updated_at
   BEFORE UPDATE ON orders
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at();
+
+-- Function to update timestamps
+CREATE OR REPLACE FUNCTION update_job_listing_timestamp()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = now();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Trigger for updating timestamps
+CREATE TRIGGER update_job_listings_timestamp
+BEFORE UPDATE ON job_listings
+FOR EACH ROW
+EXECUTE FUNCTION update_job_listing_timestamp();
